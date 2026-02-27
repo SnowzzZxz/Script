@@ -40,8 +40,8 @@ BtnLabel.Font = Enum.Font.SourceSansBold
 BtnLabel.Parent = InnerBtn
 
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 500, 0, 350)
-MainFrame.Position = UDim2.new(0.5, -250, 0.5, -175)
+MainFrame.Size = UDim2.new(0, 500, 0, 200)
+MainFrame.Position = UDim2.new(0.5, -250, 0.5, -100)
 MainFrame.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 MainFrame.Visible = false
 MainFrame.Parent = ScreenGui
@@ -105,9 +105,10 @@ MainContent.Size = UDim2.new(1, -145, 1, -55)
 MainContent.Position = UDim2.new(0, 145, 0, 50)
 MainContent.BackgroundTransparency = 1
 MainContent.ScrollBarThickness = 2
-MainContent.CanvasSize = UDim2.new(0, 0, 0, 510)
+MainContent.CanvasSize = UDim2.new(0, 0, 0, 120)
 MainContent.Parent = InnerFrame
 
+-- Função para criar botões de aba
 local function createTabBtn(name, posIdx)
     local Btn = Instance.new("TextButton")
     Btn.Size = UDim2.new(0.85, 0, 0, 40)
@@ -123,12 +124,11 @@ local function createTabBtn(name, posIdx)
 end
 
 local TabMain = createTabBtn("Main", 0)
-local TabBuy = createTabBtn("Buy ALL", 1)
-local TabFarm = createTabBtn("Farm", 2)
-local TabCredits = createTabBtn("Credits", 3)
+local TabFarm = createTabBtn("Farm", 1)  -- Só Farm
 
-local options = {Main = {}, Buy = {}, Farm = {}, Credits = {}}
+local options = {Main = {}, Farm = {}}
 
+-- Função para criar opções
 local function createOption(name, posIdx, startActive, tab, callback)
     local Container = Instance.new("Frame")
     Container.Size = UDim2.new(0.95, 0, 0, 50)
@@ -176,101 +176,24 @@ local function createOption(name, posIdx, startActive, tab, callback)
     return function() return active end
 end
 
-local function createInfoBox(title, desc, posIdx, tab, isButton, linkToCopy)
-    local Container = Instance.new("Frame")
-    Container.Size = UDim2.new(0.95, 0, 0, 50)
-    Container.Position = UDim2.new(0, 0, 0, posIdx * 60)
-    Container.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-    Container.Visible = false
-    Container.Parent = MainContent
-    Instance.new("UICorner", Container).CornerRadius = UDim.new(0, 10)
+-- Opções da Main
+local isGodRagdoll = createOption("Anti Ragdoll", 0, true, "Main")
 
-    local TitleLabel = Instance.new("TextLabel")
-    TitleLabel.Size = UDim2.new(0.9, 0, 0.5, 0)
-    TitleLabel.Position = UDim2.new(0.05, 0, 0, 5)
-    TitleLabel.Text = title
-    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TitleLabel.BackgroundTransparency = 1
-    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    TitleLabel.Font = Enum.Font.SourceSansBold
-    TitleLabel.TextSize = 16
-    TitleLabel.Parent = Container
-
-    local DescLabel = Instance.new("TextLabel")
-    DescLabel.Size = UDim2.new(0.9, 0, 0.5, 0)
-    DescLabel.Position = UDim2.new(0.05, 0, 0.5, -2)
-    DescLabel.Text = desc
-    DescLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-    DescLabel.BackgroundTransparency = 1
-    DescLabel.TextXAlignment = Enum.TextXAlignment.Left
-    DescLabel.Font = Enum.Font.SourceSans
-    DescLabel.TextSize = 14
-    DescLabel.Parent = Container
-
-    if isButton then
-        local ClickBtn = Instance.new("TextButton")
-        ClickBtn.Size = UDim2.new(1, 0, 1, 0)
-        ClickBtn.BackgroundTransparency = 1
-        ClickBtn.Text = ""
-        ClickBtn.Parent = Container
-        ClickBtn.MouseButton1Click:Connect(function()
-            if setclipboard then setclipboard(linkToCopy) end
-        end)
-    end
-
-    table.insert(options[tab], Container)
-end
-
-local isAutoRebirth = createOption("Auto Rebirth", 0, false, "Main")
-local isAutoBuyBrainrot = createOption("Auto Buy Brainrots", 1, false, "Main")
-local isAutoCollect = createOption("Auto Collect Money", 2, false, "Main")
-local isPlayerESP = createOption("Player ESP (Red Aura)", 3, false, "Main")
-
-local originalMaterials = {}
-local isLowMode = createOption("Low Mode", 4, false, "Main", function(active)
-    if active then
-        for _, v in pairs(workspace:GetDescendants()) do
-            if v:IsA("BasePart") and (v.Name == "Part" or v.Name == "Floor") then
-                originalMaterials[v] = v.Material
-                v.Material = Enum.Material.Air
-            end
-        end
-    else
-        for part, mat in pairs(originalMaterials) do
-            if part and part.Parent then part.Material = mat end
-        end
-        originalMaterials = {}
-    end
-end)
-
-local isInstantBrainrot = createOption("Instant Collect Brainrots", 5, true, "Main")
-local isGodRagdoll = createOption("Anti Ragdoll", 6, true, "Main")
-
-local buyIce = createOption("Auto Ice Emblem", 0, false, "Buy")
-local buyVic = createOption("Auto Victrola", 1, false, "Buy")
-local buyStar = createOption("Auto Star", 2, false, "Buy")
-local buyFlow = createOption("Auto Flower", 3, false, "Buy")
-local buyPhon = createOption("Auto Phone", 4, false, "Buy")
-
+-- Opções do Farm (todas originais)
 local isAutoMystic = createOption("Auto Mystic", 0, false, "Farm")
 local isAutoSecret = createOption("Auto Secret", 1, false, "Farm")
 local isAutoStellar = createOption("Auto Stellar", 2, false, "Farm")
 
-createInfoBox("By: Cleiton10HDx", "Script created by this user.", 0, "Credits", false)
-createInfoBox("Discord", "My Discord server.", 1, "Credits", true, "https://discord.gg/bxZtRj892k")
-
+-- Função para trocar abas
 local function showTab(tabName)
     for _, v in pairs(options.Main) do v.Visible = (tabName == "Main") end
-    for _, v in pairs(options.Buy) do v.Visible = (tabName == "Buy") end
     for _, v in pairs(options.Farm) do v.Visible = (tabName == "Farm") end
-    for _, v in pairs(options.Credits) do v.Visible = (tabName == "Credits") end
 end
 
 TabMain.MouseButton1Click:Connect(function() showTab("Main") end)
-TabBuy.MouseButton1Click:Connect(function() showTab("Buy") end)
 TabFarm.MouseButton1Click:Connect(function() showTab("Farm") end)
-TabCredits.MouseButton1Click:Connect(function() showTab("Credits") end)
 
+-- Dragging do botão
 local dragging, dragStart, startPos
 FloatingButton.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -279,16 +202,37 @@ FloatingButton.InputBegan:Connect(function(input)
         startPos = FloatingButton.Position
     end
 end)
+
 UserInputService.InputChanged:Connect(function(input)
     if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
         local delta = input.Position - dragStart
         FloatingButton.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
     end
 end)
+
 UserInputService.InputEnded:Connect(function() dragging = false end)
+
 FloatingButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
 
+-- === FUNÇÕES ORIGINAIS ===
+
+-- ANTI RAGDOLL (original completo)
+RunService.Heartbeat:Connect(function()
+    if isGodRagdoll() then
+        local char = Player.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            local root = char.HumanoidRootPart
+            if root:FindFirstChild("RagdollWeld") then root.RagdollWeld:Destroy() end
+            for _, v in pairs(char:GetDescendants()) do
+                if v:IsA("Motor6D") then v.Enabled = true end
+                if v:IsA("BallSocketConstraint") or v:IsA("NoCollisionConstraint") then v:Destroy() end
+            end
+        end
+    end
+end)
+
+-- AUTO FARM (original completo com teleporte e invisibilidade)
 local brainrotsFolder = workspace:WaitForChild("Client", 10):WaitForChild("Path", 5):WaitForChild("Brainrots", 5)
 local targetHead = nil
 local isHidden = false
@@ -366,135 +310,6 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
-task.spawn(function()
-    local Bridge = ReplicatedStorage:WaitForChild("Remotes", 5):WaitForChild("Bridge")
-    while task.wait(0.5) do
-        if isAutoRebirth() then pcall(function() Bridge:FireServer("General", "Rebirth", "Use") end) end
-    end
-end)
-
-task.spawn(function()
-    local Bridge = ReplicatedStorage:WaitForChild("Remotes", 5):WaitForChild("Bridge")
-    while task.wait(1) do
-        if isAutoCollect() then
-            pcall(function()
-                for i = 1, 15 do Bridge:FireServer("General", "Brainrots", "Collect", "Slot" .. i) end
-            end)
-        end
-    end
-end)
-
-task.spawn(function()
-    while task.wait(1.5) do
-        if isInstantBrainrot() then
-            pcall(function()
-                for _, obj in pairs(workspace:GetDescendants()) do
-                    if obj:IsA("ProximityPrompt") then obj.HoldDuration = 0 end
-                end
-            end)
-        end
-    end
-end)
-
-task.spawn(function()
-    local blackListNames = {["SellPrompt"] = true, ["GrabPrompt"] = true, ["PlacePrompt"] = true, ["AddPrompt"] = true}
-    while task.wait(0.1) do
-        if isAutoBuyBrainrot() then
-            pcall(function()
-                local char = Player.Character
-                if char and char:FindFirstChild("HumanoidRootPart") then
-                    local root = char.HumanoidRootPart
-                    for _, prompt in pairs(workspace:GetDescendants()) do
-                        if prompt:IsA("ProximityPrompt") and prompt.Enabled then
-                            if not blackListNames[prompt.Name] then
-                                local part = prompt.Parent
-                                local model = part and part:FindFirstAncestorOfClass("Model")
-                                local isMerchant = model and (model.Name == "IngredientsMerchant" or model.Name == "RobuxMerchant")
-                                if part and part:IsA("BasePart") and not isMerchant then
-                                    local distance = (root.Position - part.Position).Magnitude
-                                    if distance <= prompt.MaxActivationDistance then fireproximityprompt(prompt) end
-                                end
-                            end
-                        end
-                    end
-                end
-            end)
-        end
-    end
-end)
-
-task.spawn(function()
-    while task.wait(1) do
-        local espAtivo = isPlayerESP()
-        for _, p in pairs(game.Players:GetPlayers()) do
-            if p ~= Player then
-                local char = p.Character
-                if char then
-                    local highlight = char:FindFirstChild("PhantomESP")
-                    if espAtivo then
-                        if not highlight then
-                            highlight = Instance.new("Highlight")
-                            highlight.Name = "PhantomESP"
-                            highlight.FillColor = Color3.fromRGB(255, 0, 0)
-                            highlight.OutlineColor = Color3.fromRGB(255, 0, 0)
-                            highlight.FillTransparency = 0.5
-                            highlight.Parent = char
-                        end
-                    else
-                        if highlight then highlight:Destroy() end
-                    end
-                end
-            end
-        end
-    end
-end)
-
-RunService.Heartbeat:Connect(function()
-    if isGodRagdoll() then
-        local char = Player.Character
-        if char and char:FindFirstChild("HumanoidRootPart") then
-            local root = char.HumanoidRootPart
-            if root:FindFirstChild("RagdollWeld") then root.RagdollWeld:Destroy() end
-            for _, v in pairs(char:GetDescendants()) do
-                if v:IsA("Motor6D") then v.Enabled = true end
-                if v:IsA("BallSocketConstraint") or v:IsA("NoCollisionConstraint") then v:Destroy() end
-            end
-        end
-    end
-end)
-
-local function isAnyBuyActive()
-    return buyIce() or buyVic() or buyStar() or buyFlow() or buyPhon()
-end
-
-PlayerGui.Notification.DescendantAdded:Connect(function(descendant)
-    local rebirthActive = isAutoRebirth()
-    local ingredientsActive = isAnyBuyActive()
-    if rebirthActive or ingredientsActive then
-        if descendant:IsA("TextLabel") or descendant:IsA("Frame") or descendant.Name == "Template" or descendant.Name == "Value" then
-            RunService.RenderStepped:Wait()
-            local shouldDestroy = false
-            local text = ""
-            pcall(function()
-                if descendant:IsA("TextLabel") then text = descendant.Text
-                elseif descendant:FindFirstChild("Value") and descendant.Value:IsA("TextLabel") then text = descendant.Value.Text end
-            end)
-            if rebirthActive and (text:find("enough money") or text:find("necessary Brainrots")) then shouldDestroy = true end
-            if ingredientsActive and not shouldDestroy then shouldDestroy = true end
-            if shouldDestroy then descendant:Destroy() end
-        end
-    end
-end)
-
-local buyList = {
-    {get = buyIce, name = "IceEmblem"},
-    {get = buyVic, name = "Victrola"},
-    {get = buyStar, name = "Star"},
-    {get = buyFlow, name = "Flower"},
-    {get = buyPhon, name = "Phone"}
-}
-
-task.spawn(function()
-    local Bridge = ReplicatedStorage:WaitForChild("Remotes", 5):WaitForChild("Bridge")
-    while task.wait(1) do
-        if isAnyBuyActive() then
+print("✅ Phantom Hub - Anti Ragdoll + Auto Farm")
+print("📌 Aba Main: Anti Ragdoll")
+print("📌 Aba Farm: Auto Mystic/Secret/Stellar")
